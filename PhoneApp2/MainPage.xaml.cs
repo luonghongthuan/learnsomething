@@ -156,24 +156,22 @@ namespace PhoneApp2
 
         private void UpdateTile_Click(object sender, RoutedEventArgs e)
         {
+            // create data context to manage DB
             _context = new EnglishWordDataContext(EnglishWordDataContext.ConnectionString);
 
             // Create observable collection to display in UI            
             if (!_context.EnglishWords.Any(x => x.IsLearn == false))
             {
-                _englishEnglishWords = new ObservableCollection<EnglishWord>();
-                foreach (var englishWord in _englishEnglishWords)
+                foreach (var englishWord in _context.EnglishWords)
                 {
                     // Update IsLearn status
                     englishWord.IsLearn = false;
-                    _context.EnglishWords.Attach(englishWord);
                     _context.SubmitChanges();
                 }
             }
 
-            _englishEnglishWords = new ObservableCollection<EnglishWord>(_context.EnglishWords.Where(x => x.IsLearn == false).Take(2));
             var sb = new StringBuilder();
-            foreach (var englishWord in _englishEnglishWords)
+            foreach (var englishWord in _context.EnglishWords.Where(x => x.IsLearn == false).Take(2))
             {
                 string content = string.Format("{0} => {1}", englishWord.Word, englishWord.Meaning);
                 sb.Append(content);
@@ -184,8 +182,7 @@ namespace PhoneApp2
                 _context.SubmitChanges();
             }
 
-
-            ScheduledTaskAgent2.ScheduledAgent.UpdatePrimaryTile(_englishEnglishWords.Count, sb.ToString());
+            ScheduledTaskAgent2.ScheduledAgent.UpdatePrimaryTile(2, sb.ToString());
         }
 
         private ShellTileData CreateIconicTileData()

@@ -80,6 +80,7 @@ namespace PhoneApp2
             }
             PeriodicTask task = new PeriodicTask(taskName);
             task.Description = "task description";
+
             //at this point there are no tasks in background tasks of phone settings
             ScheduledActionService.Add(task);
             #if(DEBUG_AGENT)

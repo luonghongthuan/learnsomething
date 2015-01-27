@@ -16,7 +16,7 @@ namespace ScheduledTaskAgent2
     {
         private EnglishWordDataContext _context;
 
-        private ObservableCollection<EnglishWord> _englishEnglishWords;
+        private IQueryable<EnglishWord> _englishEnglishWords;
 
         /// <remarks>
         /// ScheduledAgent constructor, initializes the UnhandledException handler
@@ -30,6 +30,7 @@ namespace ScheduledTaskAgent2
             });
         }
 
+        /// <summary>The unhandled exception.</summary>
         /// Code to execute on Unhandled Exceptions
         private static void UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
@@ -68,8 +69,7 @@ namespace ScheduledTaskAgent2
             // Create observable collection to display in UI            
             if (!_context.EnglishWords.Any(x => x.IsLearn == false))
             {
-                _englishEnglishWords = new ObservableCollection<EnglishWord>();
-                foreach (var englishWord in _englishEnglishWords)
+                foreach (var englishWord in _context.EnglishWords)
                 {
                     // Update IsLearn status
                     englishWord.IsLearn = false;
@@ -77,9 +77,8 @@ namespace ScheduledTaskAgent2
                 }
             }
 
-            _englishEnglishWords = new ObservableCollection<EnglishWord>(_context.EnglishWords.Where(x => x.IsLearn == false).Take(2));
             var sb = new StringBuilder();
-            foreach (var englishWord in _englishEnglishWords)
+            foreach (var englishWord in _context.EnglishWords.Where(x => x.IsLearn == false).Take(2))
             {
                 string content = string.Format("{0} => {1}", englishWord.Word, englishWord.Meaning);
                 sb.Append(content);
@@ -87,11 +86,10 @@ namespace ScheduledTaskAgent2
 
                 // Update IsLearn status
                 englishWord.IsLearn = true;
-                _context.EnglishWords.Attach(englishWord);
                 _context.SubmitChanges();
             }
 
-            UpdatePrimaryTile(_englishEnglishWords.Count, sb.ToString());
+            UpdatePrimaryTile(2, sb.ToString());
             
             NotifyComplete();
         }
