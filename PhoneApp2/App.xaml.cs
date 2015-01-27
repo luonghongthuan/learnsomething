@@ -67,7 +67,7 @@ namespace PhoneApp2
                 }
             }
 
-            // RegisterBackgroundTask();
+             RegisterBackgroundTask();
         }
 
         private void RegisterBackgroundTask()
@@ -82,8 +82,10 @@ namespace PhoneApp2
             task.Description = "task description";
             //at this point there are no tasks in background tasks of phone settings
             ScheduledActionService.Add(task);
-            //at this point, there are two tasks with app title, same description
-            ScheduledActionService.LaunchForTest(taskName, TimeSpan.FromSeconds(60));
+            #if(DEBUG_AGENT)
+                ScheduledActionService.LaunchForTest(taskName, TimeSpan.FromSeconds(60));
+            #endif
+
         }
 
         // Code to execute when the application is launching (eg, from Start)
